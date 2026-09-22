@@ -1,5 +1,5 @@
 
-# Reto 3 - Android Tic-Tac-Toe
+#Android Tic-Tac-Toe
 
 ## Descripción
 
@@ -33,6 +33,14 @@ La aplicación permite:
 ### Juego
 
 El usuario juega utilizando los nueve botones que representan el tablero. Después de cada movimiento del usuario, Android realiza su movimiento automáticamente.
+
+### Niveles de dificultad
+
+El juego presenta tres niveles segú tu destreza:
+
+**Easy:** Jugadas aleatorias.\
+**Hard:** Primero intenta ganar; si no puede, juega aleatoriamente.\
+**Expert:** Primero intenta ganar, después bloquear al jugador y, si ninguna de esas opciones existe, juega aleatoriamente. 
 
 ### Estadísticas
 

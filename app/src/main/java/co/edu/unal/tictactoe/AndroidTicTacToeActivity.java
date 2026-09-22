@@ -8,6 +8,10 @@ import android.view.View;
 import android.graphics.Color;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.view.LayoutInflater;
 
 
 public class AndroidTicTacToeActivity extends Activity {
@@ -33,29 +37,84 @@ public class AndroidTicTacToeActivity extends Activity {
 
     private boolean mHumanStarts = true;
 
+    private static final int DIALOG_DIFFICULTY_ID = 0;
+    private static final int DIALOG_QUIT_ID = 1;
+    private static final int DIALOG_ABOUT_ID = 2;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.options_menu, menu);
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.new_game) {
-
             startNewGame();
             return true;
-
-        } else if (item.getItemId() == R.id.exit) {
-
-            finish();
+        } else if (item.getItemId() == R.id.difficulty) {
+            showDialog(DIALOG_DIFFICULTY_ID);
+            return true;
+        } else if (item.getItemId() == R.id.quit) {
+            showDialog(DIALOG_QUIT_ID);
+            return true;
+        } else if (item.getItemId() == R.id.about) {
+            showDialog(DIALOG_ABOUT_ID);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_DIFFICULTY_ID:
+                return new AlertDialog.Builder(this)
+                        .setTitle("Difficulty")
+                        .setSingleChoiceItems(
+                                new String[]{"Easy", "Harder", "Expert"},
+                                mGame.getDifficultyLevel().ordinal(),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mGame.setDifficultyLevel(
+                                                TicTacToeGame.DifficultyLevel.values()[which]
+                                        );
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .create();
+
+            case DIALOG_QUIT_ID:
+                return new AlertDialog.Builder(this)
+                        .setTitle("Quit")
+                        .setMessage("Are you sure you want to quit?")
+                        .setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                    }
+                                })
+                        .setNegativeButton("No", null)
+                        .create();
+
+            case DIALOG_ABOUT_ID:
+                LayoutInflater inflater = getLayoutInflater();
+                View aboutView = inflater.inflate(R.layout.about_dialog, null);
+
+                return new AlertDialog.Builder(this)
+                        .setTitle("About")
+                        .setView(aboutView)
+                        .setPositiveButton("OK", null)
+                        .create();
+
+            default:
+                return null;
+        }
     }
 
     @Override

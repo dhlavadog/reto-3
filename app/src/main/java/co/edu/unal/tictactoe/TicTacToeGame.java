@@ -17,6 +17,20 @@ public class TicTacToeGame {
 
     private Random mRand;
 
+    // The computer's difficulty levels
+    public enum DifficultyLevel {Easy, Harder, Expert};
+
+    // Current difficulty level
+    private DifficultyLevel mDifficultyLevel = DifficultyLevel.Expert;
+
+    public DifficultyLevel getDifficultyLevel() {
+        return mDifficultyLevel;
+    }
+
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
+        mDifficultyLevel = difficultyLevel;
+    }
+
     public TicTacToeGame() {
 
         // Seed the random number generator
@@ -108,11 +122,47 @@ public class TicTacToeGame {
 
 
 
-    public int getComputerMove()
-    {
+    public int getComputerMove() {
+        int move = -1;
+
+        switch (mDifficultyLevel) {
+            case Easy:
+                move = getRandomMove();
+                break;
+
+            case Harder:
+                move = getWinningMove();
+
+                if (move == -1)
+                    move = getRandomMove();
+                break;
+
+            case Expert:
+                move = getWinningMove();
+
+                if (move == -1)
+                    move = getBlockingMove();
+
+                if (move == -1)
+                    move = getRandomMove();
+                break;
+        }
+
+        return move;
+    }
+
+    private int getRandomMove() {
         int move;
 
-        // First see if there's a move O can make to win
+        do {
+            move = mRand.nextInt(BOARD_SIZE);
+        } while (mBoard[move] == HUMAN_PLAYER ||
+                mBoard[move] == COMPUTER_PLAYER);
+
+        return move;
+    }
+
+    private int getWinningMove() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (mBoard[i] != HUMAN_PLAYER &&
                     mBoard[i] != COMPUTER_PLAYER) {
@@ -128,31 +178,27 @@ public class TicTacToeGame {
                     mBoard[i] = curr;
             }
         }
+        return -1;
+    }
 
-        // See if there's a move O can make to block X from winning
+    private int getBlockingMove() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (mBoard[i] != HUMAN_PLAYER &&
                     mBoard[i] != COMPUTER_PLAYER) {
 
-                char curr = mBoard[i];   // Save the current number
+                char curr = mBoard[i];
                 mBoard[i] = HUMAN_PLAYER;
 
                 if (checkForWinner() == 2) {
                     mBoard[i] = curr;
                     return i;
                 }
-                else mBoard[i] = curr;
+                else
+                    mBoard[i] = curr;
             }
         }
 
-        // Generate random move
-        do
-        {
-            move = mRand.nextInt(BOARD_SIZE);
-        } while (mBoard[move] == HUMAN_PLAYER ||
-                mBoard[move] == COMPUTER_PLAYER);
-
-        return move;
+        return -1;
     }
 
 
